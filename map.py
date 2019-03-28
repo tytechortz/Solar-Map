@@ -12,43 +12,58 @@ app = dash.Dash(__name__)
 server = app.server
 
 mapbox_access_token = 'pk.eyJ1IjoidHl0ZWNob3J0eiIsImEiOiJjanN1emtuc2cwMXNhNDNuejdrMnN2aHYyIn0.kY0fOoozCTY-4IUzcLx22w'
-map_data = df = pd.read_csv('//Users/jamesswank/Python_projects/solar-map/solarPV.csv')
+# map_data = df = pd.read_csv('//Users/jamesswank/Python_projects/solar-map/solarPV.csv')
+
+df = pd.read_csv(
+    'https://raw.githubusercontent.com/'
+    'plotly/datasets/master/'
+    '1962_2006_walmart_store_openings.csv')
+
+# data = [
+#     go.Scattermapbox(
+#         lat=['45.5017'],
+#         lon=['-73.5673'],
+#         mode='markers',
+#         marker=go.scattermapbox.Marker(
+#             size=14
+#         ),
+#         text=['Montreal'],
+#     )
+# ]
+
+
 
 #  Layouts
-layout_map = dict(
-    autosize=True,
-    height=500,
-    font=dict(color="#191A1A"),
-    titlefont=dict(color="#191A1A", size='14'),
-    margin=dict(
-        l=35,
-        r=35,
-        b=35,
-        t=45
-    ),
-    hovermode="closest",
-    plot_bgcolor='#fffcfc',
-    paper_bgcolor='#fffcfc',
-    legend=dict(font=dict(size=10), orientation='h'),
-    title='WiFi Hotspots in NYC',
-    mapbox=dict(
-        accesstoken=mapbox_access_token,
-        style="light",
-        center=dict(
-            lon=-73.91251,
-            lat=40.7342
-        ),
-        zoom=10,
-    )
-)
+
 
 body = dbc.Container([
     dbc.Row([
         html.Div(
             [
-                dcc.Graph(id='map-graph',
-                            animate=True,
-                            style={'margin-top': '20'})
+                dcc.Graph(id='map', figure={
+                    'data': [{
+                        'lat': df['LAT'],
+                        'lon': df['LON'],
+                        'marker': {
+                            'color': df['YEAR'],
+                            'size': 8,
+                            'opacity': 0.6
+                        },
+                        'customdata': df['storenum'],
+                        'type': 'scattermapbox'
+                    }],
+                    'layout': {
+                        'mapbox': {
+                            'accesstoken': mapbox_access_token,
+                            'center': {'lon':-105.5, 'lat':39},
+                            'zoom': 7,
+                            'style': 'light'
+                        },
+                        'hovermode': 'closest',
+                        'height': 1000
+                        # 'margin': {'l': 0, 'r': 0, 'b': 0, 't': 0},
+                    },
+                }),
             ], 
         ),    
     ])
